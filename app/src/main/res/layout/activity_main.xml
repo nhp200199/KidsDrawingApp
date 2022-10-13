@@ -9,8 +9,24 @@
         <!-- TODO (Step 4 : Adding the drawing view class in main activity layout to draw and make it visible in the UI.)-->
         <eu.tutorials.kidsdrawingapp.DrawingView
             android:id="@+id/drawing_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#80FFFFFF" />
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="#80FFFFFF"
+            app:layout_constraintBottom_toTopOf="@+id/ib_brush_size"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/ib_brush_size"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/drawing_view"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/drawing_view"
+            app:layout_constraintTop_toBottomOf="@+id/drawing_view"
+            android:background="#80595151"
+            android:src="@drawable/ic_brush" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
