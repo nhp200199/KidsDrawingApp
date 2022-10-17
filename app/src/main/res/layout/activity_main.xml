@@ -6,17 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-        <!-- TODO (Step 4 : Adding the drawing view class in main activity layout to draw and make it visible in the UI.)-->
-        <eu.tutorials.kidsdrawingapp.DrawingView
-            android:id="@+id/drawing_view"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="#80FFFFFF"
-            app:layout_constraintBottom_toTopOf="@id/color_pallet_container"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <ImageButton
             android:id="@+id/ib_brush_size"
             android:layout_width="50dp"
@@ -25,9 +14,9 @@
             android:background="#80595151"
             android:src="@drawable/ic_brush"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/drawing_view"
+            app:layout_constraintEnd_toEndOf="@id/fl_drawing_view_container"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="@+id/drawing_view"
+            app:layout_constraintStart_toStartOf="@id/fl_drawing_view_container"
             app:layout_constraintTop_toBottomOf="@id/color_pallet_container" />
 
         <LinearLayout
@@ -38,7 +27,7 @@
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/drawing_view">
+            app:layout_constraintTop_toBottomOf="@id/fl_drawing_view_container">
 
                 <ImageButton
                     android:layout_width="25dp"
@@ -128,5 +117,34 @@
                     android:tag="@color/random" />
 
         </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/fl_drawing_view_container"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toTopOf="@+id/color_pallet_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/iv_drawing_view_img_bg"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_brush"
+                    android:scaleType="centerCrop"/>
+
+                <eu.tutorials.kidsdrawingapp.DrawingView
+                    android:id="@+id/drawing_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#80FFFFFF"
+                    app:layout_constraintBottom_toTopOf="@id/color_pallet_container"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+        </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
