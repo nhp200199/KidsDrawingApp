@@ -1,9 +1,10 @@
 package eu.tutorials.kidsdrawingapp
 
 import android.app.Dialog
+import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageButton
-import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
@@ -21,6 +22,14 @@ class MainActivity : AppCompatActivity() {
         ibBrushSize.setOnClickListener {
             showBrushSizeDialog()
         }
+
+        findViewById<ImageButton>(R.id.ib_brush_red).setOnClickListener(this::paintClicked)
+        findViewById<ImageButton>(R.id.ib_brush_black).setOnClickListener(this::paintClicked)
+        findViewById<ImageButton>(R.id.ib_brush_green).setOnClickListener(this::paintClicked)
+        findViewById<ImageButton>(R.id.ib_brush_blue).setOnClickListener(this::paintClicked)
+        findViewById<ImageButton>(R.id.ib_brush_cyan).setOnClickListener(this::paintClicked)
+        findViewById<ImageButton>(R.id.ib_brush_purple).setOnClickListener(this::paintClicked)
+        findViewById<ImageButton>(R.id.ib_brush_yellow).setOnClickListener(this::paintClicked)
     }
 
     private fun showBrushSizeDialog() {
@@ -42,4 +51,7 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
     }
 
+    fun paintClicked(v: View) {
+        drawingView.setColorForBrush(v.tag as String)
+    }
 }

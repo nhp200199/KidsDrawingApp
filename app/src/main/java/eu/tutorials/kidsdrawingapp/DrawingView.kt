@@ -172,5 +172,9 @@ class DrawingView(context: Context,attrs:AttributeSet): View(context,attrs) {
         mDrawPath?.brushThickness = newBrushSize
     }
 
+    fun setColorForBrush(color: String) {
+        this.color = Color.parseColor(color)
+    }
+
     internal inner class CustomPath(var color:Int,var brushThickness:Float):Path()
 }
