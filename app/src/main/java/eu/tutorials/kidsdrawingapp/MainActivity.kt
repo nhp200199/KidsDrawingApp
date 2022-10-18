@@ -1,10 +1,13 @@
 package eu.tutorials.kidsdrawingapp
 
+import android.Manifest
 import android.app.Dialog
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
@@ -30,6 +33,19 @@ class MainActivity : AppCompatActivity() {
         findViewById<ImageButton>(R.id.ib_brush_cyan).setOnClickListener(this::paintClicked)
         findViewById<ImageButton>(R.id.ib_brush_purple).setOnClickListener(this::paintClicked)
         findViewById<ImageButton>(R.id.ib_brush_yellow).setOnClickListener(this::paintClicked)
+
+        val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                Toast.makeText(this, "user granted", Toast.LENGTH_SHORT).show()
+            }
+            else {
+                Toast.makeText(this, "user denied", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        findViewById<ImageButton>(R.id.ib_bg_image_picker).setOnClickListener {
+            requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+        }
     }
 
     private fun showBrushSizeDialog() {
