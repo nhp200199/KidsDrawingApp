@@ -2,11 +2,15 @@ package eu.tutorials.kidsdrawingapp
 
 import android.Manifest
 import android.app.Dialog
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.View
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 
@@ -34,9 +38,16 @@ class MainActivity : AppCompatActivity() {
         findViewById<ImageButton>(R.id.ib_brush_purple).setOnClickListener(this::paintClicked)
         findViewById<ImageButton>(R.id.ib_brush_yellow).setOnClickListener(this::paintClicked)
 
+        val backgroundImagePickLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == RESULT_OK && it.data != null) {
+                findViewById<ImageView>(R.id.iv_drawing_view_img_bg).setImageURI(it.data?.data)
+            }
+        }
+
         val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
                 Toast.makeText(this, "user granted", Toast.LENGTH_SHORT).show()
+                backgroundImagePickLauncher.launch(Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI))
             }
             else {
                 Toast.makeText(this, "user denied", Toast.LENGTH_SHORT).show()
