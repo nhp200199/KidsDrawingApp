@@ -176,5 +176,14 @@ class DrawingView(context: Context,attrs:AttributeSet): View(context,attrs) {
         this.color = Color.parseColor(color)
     }
 
+    fun undoLastPath() {
+        try {
+            mPaths.removeLast()
+            invalidate()
+        } catch (e: Exception) {
+
+        }
+    }
+
     internal inner class CustomPath(var color:Int,var brushThickness:Float):Path()
 }

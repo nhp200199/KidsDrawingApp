@@ -38,6 +38,10 @@ class MainActivity : AppCompatActivity() {
         findViewById<ImageButton>(R.id.ib_brush_purple).setOnClickListener(this::paintClicked)
         findViewById<ImageButton>(R.id.ib_brush_yellow).setOnClickListener(this::paintClicked)
 
+        findViewById<ImageButton>(R.id.ib_undo).setOnClickListener {
+            drawingView.undoLastPath()
+        }
+
         val backgroundImagePickLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == RESULT_OK && it.data != null) {
                 findViewById<ImageView>(R.id.iv_drawing_view_img_bg).setImageURI(it.data?.data)
