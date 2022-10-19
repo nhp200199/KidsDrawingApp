@@ -3,14 +3,12 @@ package eu.tutorials.kidsdrawingapp
 import android.Manifest
 import android.app.Dialog
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 
@@ -48,18 +46,40 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-            if (isGranted) {
-                Toast.makeText(this, "user granted", Toast.LENGTH_SHORT).show()
+        val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { results ->
+            var allGranted = true;
+            results.entries.forEach {
+                val permission = it.key
+                val permissionGranted = it.value
+
+                if (permissionGranted) {
+                    Toast.makeText(this, "user granted $permission}", Toast.LENGTH_SHORT).show()
+                }
+                else {
+                    Toast.makeText(this, "user denied $permission}", Toast.LENGTH_SHORT).show()
+                    allGranted = false
+                }
+            }
+            if (allGranted) {
                 backgroundImagePickLauncher.launch(Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI))
             }
             else {
-                Toast.makeText(this, "user denied", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "fail", Toast.LENGTH_SHORT).show()
             }
+//            if (results) {
+//                Toast.makeText(this, "user granted", Toast.LENGTH_SHORT).show()
+//                backgroundImagePickLauncher.launch(Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI))
+//            }
+//            else {
+//                Toast.makeText(this, "user denied", Toast.LENGTH_SHORT).show()
+//            }
         }
 
         findViewById<ImageButton>(R.id.ib_bg_image_picker).setOnClickListener {
-            requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+            requestPermissionLauncher.launch(arrayOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ))
         }
     }
 
