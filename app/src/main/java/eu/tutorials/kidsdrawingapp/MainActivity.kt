@@ -3,18 +3,28 @@ package eu.tutorials.kidsdrawingapp
 import android.Manifest
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.coroutines.*
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var drawingView: DrawingView
+    private lateinit var scope: CoroutineScope
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +38,8 @@ class MainActivity : AppCompatActivity() {
             showBrushSizeDialog()
         }
 
+        scope = CoroutineScope(Dispatchers.Main.immediate)
+
         findViewById<ImageButton>(R.id.ib_brush_red).setOnClickListener(this::paintClicked)
         findViewById<ImageButton>(R.id.ib_brush_black).setOnClickListener(this::paintClicked)
         findViewById<ImageButton>(R.id.ib_brush_green).setOnClickListener(this::paintClicked)
@@ -38,6 +50,14 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<ImageButton>(R.id.ib_undo).setOnClickListener {
             drawingView.undoLastPath()
+        }
+
+        findViewById<ImageButton>(R.id.ib_save).setOnClickListener {
+            scope.launch {
+                val saveBitmapFile =
+                    saveBitmapFile(getBitmapFromView(findViewById<FrameLayout>(R.id.fl_drawing_view_container)))
+                Toast.makeText(this@MainActivity, saveBitmapFile, Toast.LENGTH_SHORT).show()
+            }
         }
 
         val backgroundImagePickLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -100,6 +120,45 @@ class MainActivity : AppCompatActivity() {
         }
 
         dialog.show()
+    }
+
+    private fun getBitmapFromView(view: View): Bitmap {
+        val returnedBitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(returnedBitmap)
+
+        val bgDrawable = view.background
+        if (bgDrawable != null) {
+            bgDrawable.draw(canvas)
+        }
+        else {
+            canvas.drawColor(Color.WHITE)
+        }
+        view.draw(canvas)
+
+        return returnedBitmap
+    }
+
+    private suspend fun saveBitmapFile(bitmap: Bitmap?): String {
+        return withContext(Dispatchers.IO) {
+            if (bitmap != null) {
+                try {
+                    val bytesStream = ByteArrayOutputStream()
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 90, bytesStream)
+
+                    val f = File(getExternalFilesDir(null)?.absolutePath + File.separator + "KidDrawingApp_" + System.currentTimeMillis() / 1000 + ".png")
+                    val fo = FileOutputStream(f)
+                    fo.write(bytesStream.toByteArray())
+                    fo.close()
+//                    Toast.makeText(this@MainActivity, f.absolutePath, Toast.LENGTH_SHORT).show()
+                    f.absolutePath
+                }
+                catch (ex: Exception) {
+//                    Toast.makeText(this@MainActivity, "something went wrong when save file", Toast.LENGTH_SHORT).show()
+                    "exception"
+                }
+            }
+            else "bitmap == null"
+        }
     }
 
     fun paintClicked(v: View) {
