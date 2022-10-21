@@ -6,6 +6,8 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
+import android.media.MediaScannerConnection
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
@@ -15,6 +17,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import kotlinx.coroutines.*
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -57,6 +60,7 @@ class MainActivity : AppCompatActivity() {
                 val saveBitmapFile =
                     saveBitmapFile(getBitmapFromView(findViewById<FrameLayout>(R.id.fl_drawing_view_container)))
                 Toast.makeText(this@MainActivity, saveBitmapFile, Toast.LENGTH_SHORT).show()
+                shareImage(saveBitmapFile)
             }
         }
 
@@ -145,7 +149,14 @@ class MainActivity : AppCompatActivity() {
                     val bytesStream = ByteArrayOutputStream()
                     bitmap.compress(Bitmap.CompressFormat.PNG, 90, bytesStream)
 
-                    val f = File(getExternalFilesDir(null)?.absolutePath + File.separator + "KidDrawingApp_" + System.currentTimeMillis() / 1000 + ".png")
+                    val folder = File(filesDir?.absolutePath + File.separator
+                            + "kids"
+                            + File.separator)
+                    if (!folder.exists()) {
+                        folder.mkdir()
+                    }
+                    val f = File(folder, "KidDrawingApp_" + System.currentTimeMillis() / 1000 + ".png")
+
                     val fo = FileOutputStream(f)
                     fo.write(bytesStream.toByteArray())
                     fo.close()
@@ -154,11 +165,40 @@ class MainActivity : AppCompatActivity() {
                 }
                 catch (ex: Exception) {
 //                    Toast.makeText(this@MainActivity, "something went wrong when save file", Toast.LENGTH_SHORT).show()
-                    "exception"
+    ex.printStackTrace()
+                    ex.localizedMessage
                 }
             }
             else "bitmap == null"
         }
+    }
+
+    private fun shareImage(result: String) {
+        Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
+
+        val fileToShare = File(result)
+        val contentUri = FileProvider.getUriForFile(this, "eu.tutorials.kidsdrawingapp.fileprovider", fileToShare)
+
+        val shareIntent = Intent()
+        shareIntent.apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_STREAM, contentUri)
+            type = "image/png"
+        }
+        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        startActivity(Intent.createChooser(shareIntent, "Share"))
+
+//        MediaScannerConnection.scanFile(this, arrayOf(result), null) {
+//            path, uri ->
+//            Toast.makeText(this, uri?.toString() ?: "", Toast.LENGTH_SHORT).show()
+//             val shareIntent = Intent()
+//            shareIntent.apply {
+//                action = Intent.ACTION_SEND
+//                putExtra(Intent.EXTRA_STREAM, uri)
+//                type = "image/png"
+//            }
+//            startActivity(Intent.createChooser(shareIntent, "Share"))
+//        }
     }
 
     fun paintClicked(v: View) {
